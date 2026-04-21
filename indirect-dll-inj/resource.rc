@@ -1,0 +1,3 @@
+#include "resource.h"
+
+IDR_DLL2    RCDATA  "Dll-simple-shell.dll"
