@@ -6,6 +6,8 @@ Collection of remote shellcode Loaders using Early Bird APC injection, direct/in
 
 This code is an improved version of [this](https://github.com/Hue-Jhan/Syscall-Apc-Injection-Trojans), and includes both the direct syscall and indirect syscalls version of a classic shellcode injection via APC, its dll version, and a DLL injector queuing LoadLibraryA.
 
+Dont confuse it with [this](https://github.com/Hue-Jhan/Syscall-Apc-Injection-Trojans), which has a similar workflow but a slighly different technique
+
 # 🖥️ Code
 This repo is a more advanced version of [this one](https://github.com/Hue-Jhan/Early-Bird-Process-and-Dll-injection/), it consists of 6 projects that have the same basic structure and share most of the code, they are: Nt Early bird APC injection, DLL version, and a DLL Injector (LoadLibrary using APC), each of them having the direct/indirect syscalls version. The shellcode is for a windows msg box, and every code includes 2 versions, one with NtCreateUserProcess (stealthier, low level, using syscalls), and an old one with RtlCreateUserProcess (higher level but easier to manage, dont uncomment it).
 
