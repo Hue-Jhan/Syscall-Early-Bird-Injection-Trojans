@@ -1,4 +1,7 @@
 # Syscall Early-Bird Injection Trojans (Direct/Indirect)
+
+<img align="right" src="media/indirsys-early-reshack.png" width="380" />
+
 Collection of remote shellcode Loaders using Early Bird APC injection, direct/indirect syscalls, ntdll and low level utilities, undetected by Windows Defender and BitDefender. This code is for educational purposes only, do not use it for any malicious or unauthorized activity.
 
 This code is an improved version of [this](https://github.com/Hue-Jhan/Syscall-Apc-Injection-Trojans), and includes both the direct syscall and indirect syscalls version of a classic shellcode injection via APC, its dll version, and a DLL injector queuing LoadLibraryA.
@@ -36,33 +39,35 @@ So to resolve a name we find the name in the AddressOfNames array, get its ```or
 > [!NOTE]
 > If funcRva points back inside the export directory region then the entry is a forwarded export, in this case and in other special cases like failing to validates the DOS header magic (MZ) and the PE signature, or if the RVA is too big, the function simply returns null.
 
-### 1) Early Bird Simple Process Injection 
+### 1) Early Bird Simple Process Injection  <img align="right" src="media/dirsys-early.png" width="400" />
 Spawns a process in a suspended state and queues shellcode to its main thread before execution begins:
 
 1. First the shellcode is decrypted (for details on the crypter mechanism, check out this repository);
 2. Secondly, we build the necessary structures and spawn a target process in a suspended state using NtCreateUserProcess via syscalls;
-3. We obtain handles to the target process and its main thread;
+3. We obtain handles to the target process and its main thread; <img align="right" src="media/indirsys-early.png" width="400" />
 4. Then we perform memory operations (Allocate -> Write/Copy -> Protect RWX) inside it using our custom syscall routines;
 5. Finally, we queue the shellcode to the main thread (NtQueueApcThread) and resume the process, forcing the payload to execute before the entry point is reached.
 
 #### 2) DLL Version 
-The DLL variant operates identically within the process it is loaded into, using GetCurrentProcessId() to target its host environment.
+The DLL variant operates identically within the process it is loaded into, using GetCurrentProcessId() to target its host environment. 
 
 [!NOTE]
 Spawning a new execution thread outside the loader lock is essential to avoid deadlocks. Try to disable precompiled headers in Visual Studio build configs to eliminate .pch build errors. Note that this DLL might occasionally fail if injected via its companion Early Bird injector variant.
 
-#### 3) DLL Injection via Early Bird 
+#### 3) DLL Injection via Early Bird <img align="right" src="media/dirsys-early-dll-inj.png" width="400" />
 Spawns a suspended process and loads a malicious DLL into it by queueing LoadLibraryA via an Early Bird APC:
 
 1. The DLL (treated as a resource) is extracted from the executable, written to disk, and its path, size, and name lengths are calculated;
 2. We spawn the target process in a suspended state and secure a handle to its main thread;
 3. Memory matching the length of the DLL path is allocated inside the target process, the path string is written, and permissions are modified to RWX;
-4. We retrieve the base address of kernel32.dll to find the pointer for LoadLibraryA;
+4. We retrieve the base address of kernel32.dll to find the pointer for LoadLibraryA; <img align="right" src="media/indirsys-early-dll-inj.png" width="400" />
 5. Finally, we queue LoadLibraryA (pointing to the DLL path string) to the suspended main thread using an APC, then resume the process.
    
 (Note: This technique may fail if the supplied DLL itself relies on conflicting Early Bird routines).
 
 # 🛡️ AV Detection
+
+<img align="right" src="media/indirsys-early-reshack.png" width="400" />
 
 Executables easily bypass static signatures from Windows Defender and BitDefender out of the box, especially when metadata is aligned or wrapped using native utility signatures (e.g., Mshta.exe or custom MSI packages).
 
