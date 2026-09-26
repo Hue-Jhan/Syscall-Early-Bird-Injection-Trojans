@@ -39,7 +39,8 @@ So to resolve a name we find the name in the AddressOfNames array, get its ```or
 > [!NOTE]
 > If funcRva points back inside the export directory region then the entry is a forwarded export, in this case and in other special cases like failing to validates the DOS header magic (MZ) and the PE signature, or if the RVA is too big, the function simply returns null.
 
-### 1) Early Bird Simple Process Injection  <img align="right" src="media/dirsys-early.png" width="400" />
+### 1) Early Bird Simple Process Injection  
+<img align="right" src="media/dirsys-early.png" width="400" />
 Spawns a process in a suspended state and queues shellcode to its main thread before execution begins:
 
 1. First the shellcode is decrypted (for details on the crypter mechanism, check out this repository);
