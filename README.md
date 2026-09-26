@@ -51,13 +51,12 @@ Spawns a process in a suspended state and queues shellcode to its main thread be
 4. Then we perform memory operations (Allocate -> Write/Copy -> Protect RWX) inside it using our custom syscall routines;
 5. Finally, we queue the shellcode to the main thread (NtQueueApcThread) and resume the process, forcing the payload to execute before the entry point is reached.
 
-#### 2) DLL Version 
+### 2) DLL Version 
 The DLL variant operates identically within the process it is loaded into, using GetCurrentProcessId() to target its host environment. 
 
-[!NOTE]
-Spawning a new execution thread outside the loader lock is essential to avoid deadlocks. Try to disable precompiled headers in Visual Studio build configs to eliminate .pch build errors. Note that this DLL might occasionally fail if injected via its companion Early Bird injector variant.
+>Spawning a new execution thread outside the loader lock is essential to avoid deadlocks. Try to disable precompiled headers in Visual Studio build configs to eliminate .pch build errors. Note that this DLL might occasionally fail if injected via its companion Early Bird injector variant.
 
-#### 3) DLL Injection via Early Bird <img align="right" src="media/dirsys-early-dll-inj.png" width="400" />
+### 3) DLL Injection via Early Bird <img align="right" src="media/dirsys-early-dll-inj.png" width="400" />
 Spawns a suspended process and loads a malicious DLL into it by queueing LoadLibraryA via an Early Bird APC:
 
 1. The DLL (treated as a resource) is extracted from the executable, written to disk, and its path, size, and name lengths are calculated;
